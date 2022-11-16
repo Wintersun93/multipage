@@ -1,12 +1,14 @@
 import React from "react";
 import "./home.scss";
-import { useState, useReducer } from "react";
+import { useReducer } from "react";
 
 type Cell = {
   id: number;
   mine: boolean;
   revealed: boolean;
   neighbors?: number;
+  row: number;
+  col: number;
 };
 
 type Action = {
@@ -16,6 +18,8 @@ type Action = {
     mine: boolean;
     revealed: boolean;
     neighbors?: number;
+    row?: number;
+    col?: number;
   };
 };
 
@@ -29,11 +33,33 @@ const reducer = (cells: Cell[][], action: Action): any => {
       return cells.map((rows) =>
         rows.map((cell) => {
           if (cell.id === action.payload.id) {
+            if (cell.neighbors === 0) {
+              revealNeighbors(cells, cell.row, cell.col);
+              return { ...cell, revealed: true };
+            }
             return { ...cell, revealed: true };
           }
           return cell;
         })
       );
+  }
+};
+
+const revealNeighbors = (grid: Cell[][], row: number, col: number) => {
+  for (let xoff = -1; xoff <= 1; xoff++) {
+    for (let yoff = -1; yoff <= 1; yoff++) {
+      let checkRow = row + xoff;
+      let checkCol = col + yoff;
+      if (
+        checkRow > -1 &&
+        checkRow < grid.length &&
+        checkCol > -1 &&
+        checkCol < grid.length
+      )
+        if (!grid[checkRow][checkCol].mine) {
+          grid[checkRow][checkCol].revealed = true;
+        }
+    }
   }
 };
 
@@ -53,6 +79,8 @@ const populateField = (): Cell[][] => {
         id: Date.now() + Math.random() * 10,
         mine: Math.random() < 0.8 ? false : true,
         revealed: false,
+        row: row,
+        col: col,
       };
     }
   }
@@ -87,6 +115,7 @@ const countNeighbors = (grid: Cell[][], row: number, col: number): number => {
   }
   return neighbors;
 };
+
 const Minesweeper: React.FC = () => {
   const [grids, dispatch] = useReducer(reducer, populateField());
   return (
@@ -112,7 +141,9 @@ const Minesweeper: React.FC = () => {
               {cell.mine ? (
                 <span className="circle"></span>
               ) : (
-                <span className="neighborText">{cell.neighbors}</span>
+                <span className="neighborText">
+                  {cell.neighbors > 0 ? cell.neighbors : ""}
+                </span>
               )}
             </div>
           ))
