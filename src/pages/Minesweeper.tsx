@@ -88,9 +88,7 @@ const countNeighbors = (grid: Cell[][], row: number, col: number): number => {
   return neighbors;
 };
 const Minesweeper: React.FC = () => {
-  //let grid: Cell[][] = populateField();
   const [grids, dispatch] = useReducer(reducer, populateField());
-  console.log(grids);
   return (
     <>
       <div className="MinesweeperField">
@@ -111,7 +109,12 @@ const Minesweeper: React.FC = () => {
                 })
               }
             >
-              {cell.mine ? <span className="circle"></span> : <span className="neighborText">{cell.neighbors}</span>}
+              g
+              {cell.mine ? (
+                <span className="circle"></span>
+              ) : (
+                <span className="neighborText">{cell.neighbors}</span>
+              )}
             </div>
           ))
         )}
