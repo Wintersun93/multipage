@@ -109,7 +109,6 @@ const Minesweeper: React.FC = () => {
                 })
               }
             >
-              g
               {cell.mine ? (
                 <span className="circle"></span>
               ) : (
