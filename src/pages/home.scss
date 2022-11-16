@@ -1,0 +1,35 @@
+.home {
+    height: 85vh;
+    border: 0.5px solid lightgreen;
+}
+
+.circle {
+    height: 25px;
+    width: 25px;
+    border: 0.3px solid red;
+    border-radius: 50%;
+    position: absolute;
+    background-color: red;
+    z-index: -1;
+}
+
+.MinesweeperField {
+    height: 85vh;
+    border: 0.5px solid lightblue;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+}
+
+.Cell {
+    border: 1px solid lightcyan;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.neighborText
+{
+    z-index: -5;
+}
