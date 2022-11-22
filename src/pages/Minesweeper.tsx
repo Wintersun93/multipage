@@ -46,6 +46,9 @@ const reducer = (cells: Cell[][], action: Action): any => {
 };
 
 const revealNeighbors = (grid: Cell[][], row: number, col: number) => {
+  if (grid[row][col].mine) {
+    return -1;
+  }
   for (let xoff = -1; xoff <= 1; xoff++) {
     for (let yoff = -1; yoff <= 1; yoff++) {
       let checkRow = row + xoff;
@@ -56,8 +59,14 @@ const revealNeighbors = (grid: Cell[][], row: number, col: number) => {
         checkCol > -1 &&
         checkCol < grid.length
       )
-        if (!grid[checkRow][checkCol].mine) {
+        if (
+          !grid[checkRow][checkCol].mine &&
+          grid[checkRow][checkCol].revealed === false
+        ) {
           grid[checkRow][checkCol].revealed = true;
+          if (grid[checkRow][checkCol].neighbors === 0) {
+            revealNeighbors(grid, checkRow, checkCol);
+          }
         }
     }
   }

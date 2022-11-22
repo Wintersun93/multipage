@@ -1,5 +1,5 @@
 .home {
-    height: 85vh;
+    height: 850px;
     border: 0.5px solid lightgreen;
 }
 
@@ -14,7 +14,7 @@
 }
 
 .MinesweeperField {
-    height: 85vh;
+    height: 850px;
     border: 0.5px solid lightblue;
     display: grid;
     grid-template-columns: repeat(10, 1fr);
@@ -29,8 +29,7 @@
     cursor: pointer;
 }
 
-.neighborText
-{
+.neighborText {
     font-size: 50px;
     z-index: -5;
 }
