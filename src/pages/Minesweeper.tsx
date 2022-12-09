@@ -63,7 +63,7 @@ const reducer = (cells: Cell[][], action: Action): any => {
   };
 }
 const gameOver = (cells: Cell[][], cell: Cell) => {
-  alert("Verloren! \nLili wird dich nun aufessen!")
+  
   cells.map((row) => row.map((cell) => cell.revealed = true))
 };
 
