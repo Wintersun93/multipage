@@ -1,6 +1,6 @@
 import React from "react";
 import "./home.scss";
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 
 type Cell = {
   id: number;
@@ -20,11 +20,14 @@ type Action = {
     neighbors?: number;
     row?: number;
     col?: number;
+    counter?: number;
   };
 };
 
 export const ACTIONS = {
   REVEAL_FIELD: "reveal-field",
+  RESET_FIELD: "reset-field",
+  INIT_FIELD: "init_field"
 };
 
 const reducer = (cells: Cell[][], action: Action): any => {
@@ -37,12 +40,31 @@ const reducer = (cells: Cell[][], action: Action): any => {
               revealNeighbors(cells, cell.row, cell.col);
               return { ...cell, revealed: true };
             }
+            if (cell.mine) {
+              gameOver(cells, cell);
+            }
             return { ...cell, revealed: true };
           }
           return cell;
         })
       );
-  }
+    case ACTIONS.RESET_FIELD:
+      return cells.map((rows) =>
+        rows.map((cell) => {
+          return { ...cell, revealed: false, mine: Math.random() < 0.8 ? false : true }
+        })
+      )
+    case ACTIONS.INIT_FIELD:
+      return cells.map((rows) =>
+        rows.map((cell) => {
+          return { ...cell, mine: Math.random() < 0.8 ? false : true }
+        })
+      )
+  };
+}
+const gameOver = (cells: Cell[][], cell: Cell) => {
+  alert("Verloren! \nLili wird dich nun aufessen!")
+  cells.map((row) => row.map((cell) => cell.revealed = true))
 };
 
 const revealNeighbors = (grid: Cell[][], row: number, col: number) => {
@@ -72,10 +94,10 @@ const revealNeighbors = (grid: Cell[][], row: number, col: number) => {
   }
 };
 
-const createField = (cols: number, rows: number): Cell[][] => {
-  let grid: Cell[][] = new Array(cols);
+const createField = (rows: number, cols: number): Cell[][] => {
+  let grid: Cell[][] = new Array(rows);
   for (let i = 0; i < cols; i++) {
-    grid[i] = new Array(rows);
+    grid[i] = new Array(cols);
   }
   return grid;
 };
@@ -127,8 +149,14 @@ const countNeighbors = (grid: Cell[][], row: number, col: number): number => {
 
 const Minesweeper: React.FC = () => {
   const [grids, dispatch] = useReducer(reducer, populateField());
+  const [timer, settimer] = useState<string>("00:00")
+  const [counter, setCounter] = useState<number>(0)
   return (
     <>
+      <div className="reset" onClick={() => dispatch({ type: ACTIONS.RESET_FIELD, payload: { id: 1, mine: false, revealed: false } })}>
+        <button>Reset</button>
+      </div>
+      <div className="timer">{timer} , {counter}</div>
       <div className="MinesweeperField">
         {grids.map((row: Cell[]) =>
           row.map((cell: Cell) => (
@@ -136,22 +164,27 @@ const Minesweeper: React.FC = () => {
               key={cell.id}
               className="Cell"
               style={{ background: cell.revealed === false ? "grey" : "" }}
-              onClick={() =>
+              onClick={() => {
                 dispatch({
                   type: ACTIONS.REVEAL_FIELD,
                   payload: {
                     id: cell.id,
                     mine: cell.mine,
                     revealed: cell.revealed,
+                    counter: counter,
                   },
                 })
+                setCounter(counter + 1)
               }
+
+              }
+
             >
               {cell.mine ? (
-                <span className="circle"></span>
+                <span className="circle cat"></span>
               ) : (
                 <span className="neighborText">
-                  {cell.neighbors > 0 ? cell.neighbors : ""}
+                  {cell.neighbors ? cell.neighbors > 0 ? cell.neighbors : "" : ""}
                 </span>
               )}
             </div>
